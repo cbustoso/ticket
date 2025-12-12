@@ -18,8 +18,8 @@ def ticket():
         'regalo_para': "Laura Soto", # <--- ¡CÁMBIALO POR EL NOMBRE DE TU HIJA!
         'fecha': "12 DE FEBRERO 2026",
         'lugar': "Estadio Nacional, Santiago",
-        'sector': "Platea Central (Fila de la suerte)",
-        'mensaje': "¡Que la magia de la Navidad se convierta en música! Te amo.",
+        'sector': "Andes",
+        'mensaje': "¡Que la magia de la Navidad se convierta en música!",
         
         # DATOS TÉCNICOS
         'image_filename': TINI_IMAGE_FILENAME,

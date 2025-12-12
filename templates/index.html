@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ticket Mágico de Navidad - {{ titulo }}</title>
 <style>
+    /* ****************************************************** */
+    /* *** AJUSTE CRÍTICO: MODELO DE CAJA PREDECIBLE *** */
+    /* ****************************************************** */
+    *, *::before, *::after {
+        box-sizing: border-box; /* Esto asegura que padding y border se incluyan en el ancho/alto */
+    }
+
     /* VARIABLES DE COLOR */
     :root {
         --color-tini-rosa: #ff69b4;
@@ -37,10 +44,10 @@
         color: white;
     }
 
-    /* CONTENEDOR PRINCIPAL DEL TICKET */
+    /* CONTENEDOR PRINCIPAL DEL TICKET (ESCRITORIO) */
     .ticket-container {
         display: flex;
-        width: 850px;
+        width: 850px; 
         max-width: 95%;
         height: 350px; 
         background: linear-gradient(135deg, var(--color-tini-rosa) 0%, var(--color-rosa-oscuro) 70%);
@@ -74,12 +81,13 @@
         justify-content: center;
         border-right: 3px dashed var(--color-navidad-verde);
         z-index: 2;
+        background-image: url("{{ url_for('static', filename=image_filename) }}");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
     }
     .tini-tour-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.9;
+        display: none; 
     }
 
     /* --- LADO DERECHO: DETALLES --- */
@@ -123,7 +131,7 @@
 
     .details-box {
         background: rgba(0,0,0,0.5);
-        padding: 15px;
+        padding: 15px; 
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
@@ -135,12 +143,13 @@
     .details-row strong {
         color: var(--color-dorado);
         margin-right: 5px;
-        min-width: 60px;
+        min-width: 60px; 
     }
     .icon { color: var(--color-tini-rosa); font-size: 20px; margin-right: 10px;}
     .content-editable-text {
         font-weight: bold;
         color: var(--color-detalle-claro);
+        font-size: 18px; 
     }
 
     .gift-msg {
@@ -159,14 +168,15 @@
         margin-top: 10px;
     }
 
-    /* SECCIÓN DE MÚSICA (AUDIO MP3) */
+    /* SECCIÓN DE MÚSICA (IFRAME SPOTIFY COMPLETO) -- ¡CAMBIOS AQUÍ! */
     .music-player-container {
-        width: 600px; /* Tamaño más adecuado para un reproductor de audio */
+        width: 600px; 
         max-width: 95%;
-        height: 150px; 
+        height: 450px; /* Aumentamos la altura para el widget grande */
         text-align: center;
         padding: 20px;
-        background-color: var(--color-fondo-oscuro);
+        background-color: #f7f7f7; 
+        color: var(--color-fondo-oscuro); 
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         margin-top: 25px;
@@ -174,19 +184,95 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        border: 3px solid var(--color-tini-rosa); 
     }
     .music-player-container h3 {
-        color: var(--color-tini-rosa);
+        color: var(--color-tini-rosa); 
         margin-top: 0;
         font-size: 22px;
-        text-shadow: 1px 1px #000;
+        text-shadow: none; 
         margin-bottom: 15px;
     }
-    /* Estilo del reproductor de audio HTML5 */
-    audio {
-        width: 90%;
-        margin: 0 auto;
-        border-radius: 5px;
+    .spotify-iframe-wrapper {
+        width: 100%;
+        height: 380px; /* Aumentamos la altura del contenedor del iframe */
+        background: white; 
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    /* Quitamos los estilos de párrafos internos ya que el mensaje fue eliminado */
+    /* .music-player-container p { color: var(--color-fondo-oscuro); }
+    .music-player-container p strong { color: var(--color-rosa-oscuro); } */
+
+    /* ****************************************************** */
+    /* *** OPTIMIZACIÓN MÓVIL (Media Queries) *** */
+    /* ****************************************************** */
+
+    @media (max-width: 768px) {
+        /* REINICIA EL CONTENEDOR PRINCIPAL PARA DISPOSITIVOS MÓVILES */
+        .ticket-container {
+            flex-direction: column; 
+            width: 95%; 
+            height: auto; 
+            max-width: none;
+            border-radius: 15px;
+        }
+
+        /* AJUSTE DE TÍTULOS */
+        h1 {
+            font-size: 36px;
+        }
+
+        /* SECCIÓN DE IMAGEN (ARRIBA) */
+        .ticket-image-side {
+            order: 1; 
+            width: 100%;
+            height: 200px; 
+            border-right: none;
+            border-bottom: 3px dashed var(--color-navidad-verde); 
+        }
+        
+        /* SECCIÓN DE DETALLES (ABAJO) */
+        .ticket-details-side {
+            order: 2; 
+            width: 100%;
+            padding: 10px; /* Reducido para móvil */
+        }
+        
+        /* AJUSTE DE CONTENIDO DENTRO DEL RECUADRO */
+        .details-box {
+            padding: 10px 8px; /* Ajuste horizontal más fino */
+        }
+        
+        .details-row strong {
+            min-width: unset; 
+            white-space: nowrap; 
+        }
+
+        .details-row .icon {
+            font-size: 18px; 
+            margin-right: 5px;
+        }
+        
+        .content-editable-text {
+            font-size: 16px; 
+        }
+
+        .gift-msg {
+            font-size: 14px; 
+        }
+        
+        /* REPRODUCTOR DE MÚSICA (LO HACEMOS MÁS ANCHO Y ALTO EN MÓVIL) */
+        .music-player-container {
+            width: 95%;
+            padding: 15px;
+            height: 450px; /* Mismo alto que en escritorio */
+        }
+        
+        .spotify-iframe-wrapper {
+            width: 100%;
+            height: 380px; /* Mismo alto que en escritorio */
+        }
     }
 </style>
 </head>
@@ -234,16 +320,17 @@
     <div class="music-player-container">
         <h3>¡DALE PLAY A LA EMOCIÓN! 🎶</h3>
         
-        <audio controls autoplay loop>
-            <source src="{{ mp3_url }}" type="audio/mp3">
-            Tu navegador no soporta el elemento de audio.
-        </audio>
-
-        <p style="font-size:14px; margin-top:10px; color:gray;">
-            ¡La música mágica ya está sonando en bucle! 
-        </p>
-        
-    </div>
+        <div class="spotify-iframe-wrapper">
+            <iframe 
+                data-testid="embed-iframe" 
+                style="border-radius:12px" 
+                src="{{ spotify_embed_url }}" 
+                width="100%" 
+                height="380" frameBorder="0" 
+                allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+            </iframe>
     
 </body>
 </html>

@@ -1,336 +1,232 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ticket Mágico de Navidad - {{ titulo }}</title>
-<style>
-    /* ****************************************************** */
-    /* *** AJUSTE CRÍTICO: MODELO DE CAJA PREDECIBLE *** */
-    /* ****************************************************** */
-    *, *::before, *::after {
-        box-sizing: border-box; /* Esto asegura que padding y border se incluyan en el ancho/alto */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Mágico - {{ regalo_para }}</title>
+    <style>
+        /* RESET DE BOX MODEL PARA EVITAR BORDES CORRIDOS */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
 
-    /* VARIABLES DE COLOR */
-    :root {
-        --color-tini-rosa: #ff69b4;
-        --color-rosa-oscuro: #cc0066;
-        --color-navidad-verde: #006400;
-        --color-dorado: #d4af37;
-        --color-fondo-oscuro: #111;
-        --color-fondo-web: #0c1523; /* Azul marino oscuro */
-        --color-detalle-claro: #ffe0f0;
-    }
+        :root {
+            --color-tini-rosa: #ff69b4;
+            --color-rosa-oscuro: #cc0066;
+            --color-navidad-verde: #006400;
+            --color-dorado: #d4af37;
+            --color-fondo-web: #0c1523;
+            --color-detalle-claro: #ffe0f0;
+        }
 
-    /* ESTILOS GENERALES Y FONDO */
-    body {
-        background-color: var(--color-fondo-web);
-        /* Efecto de destellos */
-        background-image: 
-            radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
-            radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
-        background-size: 100px 100px;
-        background-position: 0 0, 50px 50px;
+        body {
+            background-color: var(--color-fondo-web);
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+                radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+            background-size: 80px 80px;
+            background-position: 0 0, 40px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 20px 0;
-        color: white;
-    }
-
-    /* CONTENEDOR PRINCIPAL DEL TICKET (ESCRITORIO) */
-    .ticket-container {
-        display: flex;
-        width: 850px; 
-        max-width: 95%;
-        height: 350px; 
-        background: linear-gradient(135deg, var(--color-tini-rosa) 0%, var(--color-rosa-oscuro) 70%);
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-        position: relative;
-        overflow: hidden;
-        border: 4px solid var(--color-detalle-claro); 
-        z-index: 10;
-    }
-
-    /* EFECTO DE PUNTOS EN EL TICKET (INTERNO) */
-    .ticket-container::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-image: 
-            radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
-        background-size: 20px 20px;
-        z-index: 1;
-        opacity: 0.8;
-    }
-
-    /* --- LADO IZQUIERDO: IMAGEN DEL CONCIERTO --- */
-    .ticket-image-side {
-        width: 40%;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-right: 3px dashed var(--color-navidad-verde);
-        z-index: 2;
-        background-image: url("{{ url_for('static', filename=image_filename) }}");
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-    }
-    .tini-tour-image {
-        display: none; 
-    }
-
-    /* --- LADO DERECHO: DETALLES --- */
-    .ticket-details-side {
-        width: 60%;
-        padding: 20px;
-        position: relative;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    /* TIPOGRAFÍA */
-    .regalo-unico {
-        text-align: center;
-        font-size: 18px;
-        color: var(--color-dorado);
-        letter-spacing: 2px;
-        margin-bottom: 5px;
-    }
-    h1 {
-        text-align: center;
-        font-family: 'Arial Black', sans-serif;
-        font-size: 50px;
-        margin: 0 0 10px 0;
-        text-transform: uppercase;
-        background: linear-gradient(to right, #fff, var(--color-dorado), #fff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.8));
-    }
-
-    .tini-deco {
-        text-align: center;
-        font-size: 24px;
-        margin-bottom: 20px;
-        letter-spacing: 15px;
-        color: var(--color-detalle-claro);
-    }
-
-    .details-box {
-        background: rgba(0,0,0,0.5);
-        padding: 15px; 
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .details-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-    }
-    .details-row strong {
-        color: var(--color-dorado);
-        margin-right: 5px;
-        min-width: 60px; 
-    }
-    .icon { color: var(--color-tini-rosa); font-size: 20px; margin-right: 10px;}
-    .content-editable-text {
-        font-weight: bold;
-        color: var(--color-detalle-claro);
-        font-size: 18px; 
-    }
-
-    .gift-msg {
-        margin-top: 15px;
-        font-style: italic;
-        text-align: center;
-        color: var(--color-detalle-claro);
-        font-size: 16px;
-    }
-    .triple-t {
-        text-align: right;
-        font-family: 'Arial Black', sans-serif;
-        font-size: 20px;
-        color: var(--color-navidad-verde); 
-        opacity: 0.7;
-        margin-top: 10px;
-    }
-
-    /* SECCIÓN DE MÚSICA (IFRAME SPOTIFY COMPLETO) -- ¡CAMBIOS AQUÍ! */
-    .music-player-container {
-        width: 600px; 
-        max-width: 95%;
-        height: 450px; /* Aumentamos la altura para el widget grande */
-        text-align: center;
-        padding: 20px;
-        background-color: #f7f7f7; 
-        color: var(--color-fondo-oscuro); 
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        margin-top: 25px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid var(--color-tini-rosa); 
-    }
-    .music-player-container h3 {
-        color: var(--color-tini-rosa); 
-        margin-top: 0;
-        font-size: 22px;
-        text-shadow: none; 
-        margin-bottom: 15px;
-    }
-    .spotify-iframe-wrapper {
-        width: 100%;
-        height: 380px; /* Aumentamos la altura del contenedor del iframe */
-        background: white; 
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    /* Quitamos los estilos de párrafos internos ya que el mensaje fue eliminado */
-    /* .music-player-container p { color: var(--color-fondo-oscuro); }
-    .music-player-container p strong { color: var(--color-rosa-oscuro); } */
-
-    /* ****************************************************** */
-    /* *** OPTIMIZACIÓN MÓVIL (Media Queries) *** */
-    /* ****************************************************** */
-
-    @media (max-width: 768px) {
-        /* REINICIA EL CONTENEDOR PRINCIPAL PARA DISPOSITIVOS MÓVILES */
+        /* CONTENEDOR DEL TICKET */
         .ticket-container {
-            flex-direction: column; 
-            width: 95%; 
-            height: auto; 
-            max-width: none;
-            border-radius: 15px;
+            display: flex;
+            width: 850px; 
+            max-width: 100%;
+            height: 380px; 
+            background: linear-gradient(135deg, var(--color-tini-rosa) 0%, var(--color-rosa-oscuro) 70%);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--color-detalle-claro);
         }
 
-        /* AJUSTE DE TÍTULOS */
-        h1 {
-            font-size: 36px;
-        }
-
-        /* SECCIÓN DE IMAGEN (ARRIBA) */
+        /* LADO IMAGEN (IZQUIERDA) */
         .ticket-image-side {
-            order: 1; 
-            width: 100%;
-            height: 200px; 
-            border-right: none;
-            border-bottom: 3px dashed var(--color-navidad-verde); 
-        }
-        
-        /* SECCIÓN DE DETALLES (ABAJO) */
-        .ticket-details-side {
-            order: 2; 
-            width: 100%;
-            padding: 10px; /* Reducido para móvil */
-        }
-        
-        /* AJUSTE DE CONTENIDO DENTRO DEL RECUADRO */
-        .details-box {
-            padding: 10px 8px; /* Ajuste horizontal más fino */
-        }
-        
-        .details-row strong {
-            min-width: unset; 
-            white-space: nowrap; 
+            width: 40%;
+            background-image: url("{{ url_for('static', filename=image_filename) }}");
+            background-size: cover;
+            background-position: center;
+            border-right: 3px dashed var(--color-navidad-verde);
+            position: relative;
         }
 
-        .details-row .icon {
-            font-size: 18px; 
-            margin-right: 5px;
+        /* LADO DETALLES (DERECHA) */
+        .ticket-details-side {
+            width: 60%;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
         }
-        
-        .content-editable-text {
-            font-size: 16px; 
+
+        h1 {
+            font-size: 45px;
+            margin: 0;
+            text-align: center;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--color-dorado), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+        }
+
+        .regalo-unico {
+            color: var(--color-dorado);
+            text-align: center;
+            letter-spacing: 2px;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .details-box {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .details-row {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .details-row strong {
+            color: var(--color-dorado);
+            margin-right: 10px;
         }
 
         .gift-msg {
-            font-size: 14px; 
+            font-style: italic;
+            text-align: center;
+            color: var(--color-detalle-claro);
+            font-size: 15px;
         }
-        
-        /* REPRODUCTOR DE MÚSICA (LO HACEMOS MÁS ANCHO Y ALTO EN MÓVIL) */
+
+        /* BOTÓN DE DESCARGA */
+        .download-btn {
+            margin-top: 25px;
+            padding: 15px 35px;
+            background-color: var(--color-dorado);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            background-color: #f1c40f;
+        }
+
+        /* REPRODUCTOR SPOTIFY (GRANDE) */
         .music-player-container {
-            width: 95%;
-            padding: 15px;
-            height: 450px; /* Mismo alto que en escritorio */
+            width: 600px;
+            max-width: 100%;
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid var(--color-tini-rosa);
+            text-align: center;
         }
-        
-        .spotify-iframe-wrapper {
-            width: 100%;
-            height: 380px; /* Mismo alto que en escritorio */
+
+        .music-player-container h3 {
+            color: var(--color-rosa-oscuro);
+            margin-top: 0;
         }
-    }
-</style>
+
+        .spotify-wrapper {
+            height: 380px; /* Tamaño grande pedido */
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* --- OPTIMIZACIÓN PARA MÓVIL --- */
+        @media (max-width: 768px) {
+            .ticket-container {
+                flex-direction: column;
+                height: auto;
+                width: 95%;
+            }
+
+            .ticket-image-side {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 3px dashed var(--color-navidad-verde);
+            }
+
+            .ticket-details-side {
+                width: 100%;
+                padding: 20px;
+            }
+
+            h1 { font-size: 32px; }
+
+            .details-box { padding: 10px; }
+
+            .music-player-container { width: 95%; }
+        }
+    </style>
 </head>
 <body>
 
     <div class="ticket-container">
-        
-        <div class="ticket-image-side">
-            <img src="{{ url_for('static', filename=image_filename) }}" alt="Tini Futttura Tour" class="tini-tour-image">
-        </div>
-
+        <div class="ticket-image-side"></div>
         <div class="ticket-details-side">
-            <div class="regalo-unico">🎁 REGALO ÚNICO DE NAVIDAD 🎄</div>
+            <div class="regalo-unico">🎄 REGALO MÁGICO DE NAVIDAD 🎁</div>
             <h1>{{ titulo }}</h1>
             
-            <div class="tini-deco">🦋 💖 ✨</div>
-            
             <div class="details-box">
-                <div class="details-row">
-                    <span class="icon">👑</span> 
-                    <strong>Para:</strong> <span class="content-editable-text" contenteditable="true">{{ regalo_para }}</span>
-                </div>
-                <div class="details-row">
-                    <span class="icon">📅</span> 
-                    <strong>Fecha:</strong> <span class="content-editable-text" contenteditable="true">{{ fecha }}</span>
-                </div>
-                <div class="details-row">
-                    <span class="icon">📍</span> 
-                    <strong>Lugar:</strong> <span class="content-editable-text" contenteditable="true">{{ lugar }}</span>
-                </div>
-                <div class="details-row">
-                    <span class="icon">🎫</span> 
-                    <strong>Sector:</strong> <span class="content-editable-text" contenteditable="true">{{ sector }}</span>
-                </div>
+                <div class="details-row">👑 <strong>Para:</strong> {{ regalo_para }}</div>
+                <div class="details-row">📅 <strong>Fecha:</strong> {{ fecha }}</div>
+                <div class="details-row">📍 <strong>Lugar:</strong> {{ lugar }}</div>
+                <div class="details-row">🎫 <strong>Sector:</strong> {{ sector }}</div>
             </div>
 
-            <div class="gift-msg" contenteditable="true">
-                "{{ mensaje }}"
-            </div>
-            
-            <div class="triple-t">TINI TINI TINI</div>
+            <div class="gift-msg">"{{ mensaje }}"</div>
         </div>
     </div>
 
+    <a href="{{ url_for('static', filename=pdf_filename) }}" download class="download-btn">
+        📥 Descargar Entrada PDF
+    </a>
+
     <div class="music-player-container">
-        <h3>¡DALE PLAY A LA EMOCIÓN! 🎶</h3>
-        
-        <div class="spotify-iframe-wrapper">
+        <h3>🎶 ¡Siente la música!</h3>
+        <div class="spotify-wrapper">
             <iframe 
-                data-testid="embed-iframe" 
-                style="border-radius:12px" 
                 src="{{ spotify_embed_url }}" 
                 width="100%" 
-                height="380" frameBorder="0" 
+                height="380" 
+                frameBorder="0" 
                 allowfullscreen="" 
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
                 loading="lazy">
             </iframe>
-    
+        </div>
+        <p style="color: #333; font-size: 12px; margin-top: 10px;">Haz clic en el play para iniciar la sorpresa</p>
+    </div>
+
 </body>
 </html>

@@ -23,7 +23,7 @@ def ticket_laura():
     }
     return render_template('index.html', **ticket_data)
 
-@app.route('/leticia')
+@app.route('/inicio')
 def ticket_leticia():
     """Ruta para el ticket de Leticia Sandoval."""
     ticket_data = {
